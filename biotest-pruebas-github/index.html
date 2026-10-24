@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BioTest Diagnósticos</title>
+<style>
+:root{--blue:#183e9e;--blue2:#2857d8;--bg:#f3f6fc;--ink:#172033;--muted:#64748b;--line:#dbe3f0;--green:#137547;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(110deg,var(--blue),var(--blue2));color:white;padding:18px 5vw;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:22px}.sub{font-size:12px;opacity:.85;margin-top:4px}.test-label{display:inline-block;margin-top:7px;padding:4px 8px;border:1px solid #ffffff70;border-radius:999px;font-size:11px;letter-spacing:.2px;background:#ffffff18;color:#fff}
+nav{display:flex;gap:8px;flex-wrap:wrap}button,.btn{border:0;border-radius:8px;padding:10px 14px;background:var(--blue2);color:white;cursor:pointer;font-size:14px;font-weight:600}button:hover,.btn:hover{filter:brightness(.95)}button.secondary{background:white;color:var(--blue);border:1px solid var(--line)}button.danger{background:#b42318}button:disabled{opacity:.45;cursor:not-allowed}
+main{max-width:1050px;margin:28px auto;padding:0 18px}.card{background:white;border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:18px;box-shadow:0 5px 18px #182d4c0b}
+h1{font-size:28px;margin:0 0 8px}h2{font-size:20px;margin:0 0 15px}p{line-height:1.5}.muted{color:var(--muted)}.notice{padding:12px 14px;background:#eef4ff;border:1px solid #d7e5ff;border-radius:8px;margin:12px 0}
+.success{background:#ecfdf3;border-color:#abefc6;color:var(--green)}.error{background:#fef3f2;border-color:#fecdca;color:var(--red)}
+label{display:block;font-weight:700;font-size:14px;margin:13px 0 6px}input,select{width:100%;padding:11px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:15px;background:white}form{max-width:470px}.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}.hidden{display:none!important}.pill{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700;background:#eef2ff;color:#3730a3}.pill.cancelled{background:#fee2e2;color:#991b1b}.pill.upcoming{background:#dcfce7;color:#166534}
+table{width:100%;border-collapse:collapse;margin-top:12px}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);font-size:14px}th{background:#f8fafc;color:#475569}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.small{font-size:12px}footer{text-align:center;padding:22px;color:var(--muted);font-size:12px}.credentials-note{margin-top:7px;font-size:9px;line-height:1.35;color:#94a3b8;opacity:.85}
+a{color:var(--blue2)}.topline{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<header>
+  <div><div class="brand">BioTest Diagnósticos</div><div class="sub">Portal de atención al paciente</div><div class="test-label">Sitio web de prueba para Selenium IDE</div></div>
+  <nav id="nav" class="hidden">
+    <button class="secondary" data-view="dashboard">Inicio</button>
+    <button class="secondary" data-view="appointments">Mis citas</button>
+    <button class="secondary" data-view="reports">Informes</button>
+    <button class="secondary" id="logoutBtn">Cerrar sesión</button>
+  </nav>
+</header>
+<main>
+  <section id="loginView" class="card">
+    <h1>Inicio de sesión</h1>
+    <p class="muted">Ingresa tus credenciales para acceder a tu cuenta.</p>
+    <form id="loginForm">
+      <label for="loginEmail">Correo electrónico</label><input id="loginEmail" type="email" autocomplete="username" required>
+      <label for="loginPassword">Contraseña</label><input id="loginPassword" type="password" autocomplete="current-password" required>
+      <div class="actions" style="margin-top:16px"><button id="loginBtn" type="submit">Iniciar sesión</button><button type="button" class="secondary" id="forgotLink">Recuperar contraseña</button></div>
+    </form>
+    <div id="loginMessage" class="notice hidden" role="status"></div>
+  </section>
+
+  <section id="forgotView" class="card hidden">
+    <h1>Recuperación de contraseña</h1>
+    <p class="muted">Flujo simulado: no se envían correos reales ni se modifica una cuenta externa.</p>
+    <form id="forgotForm">
+      <label for="recoveryEmail">Correo registrado</label><input id="recoveryEmail" type="email" placeholder="paciente@biotest.demo" required>
+      <div class="actions" style="margin-top:16px"><button id="recoverySubmit" type="submit">Solicitar recuperación</button><button type="button" class="secondary" id="backLogin">Volver al inicio de sesión</button></div>
+    </form>
+    <div id="recoveryMessage" class="notice hidden" role="status"></div>
+  </section>
+
+  <section id="dashboardView" class="hidden">
+    <div class="card">
+      <div class="topline"><div><h1>Panel del paciente</h1><p class="muted">Bienvenido, usuario de demostración.</p></div><span class="pill">Sesión activa</span></div>
+      <p>Desde este panel puedes consultar el historial de citas y descargar informes de prueba.</p>
+      <div class="actions"><button data-view="appointments">Consultar historial de citas</button><button data-view="reports">Ver informes disponibles</button></div>
+    </div>
+  </section>
+
+  <section id="appointmentsView" class="card hidden">
+    <div class="topline"><div><h1>Historial de citas</h1><p class="muted">Citas ficticias asociadas al usuario de demostración.</p></div><button class="secondary" data-view="dashboard">Volver al panel</button></div>
+    <div id="appointmentMessage" class="notice hidden" role="status"></div>
+    <table>
+      <thead><tr><th>ID de cita</th><th>Especialidad</th><th>Fecha</th><th>Estado</th><th>Acción</th></tr></thead>
+      <tbody id="appointmentRows"></tbody>
+    </table>
+  </section>
+
+  <section id="reportsView" class="card hidden">
+    <div class="topline"><div><h1>Informes y resultados</h1><p class="muted">Archivos de ejemplo; no contienen datos médicos reales.</p></div><button class="secondary" data-view="dashboard">Volver al panel</button></div>
+    <table><thead><tr><th>ID de informe</th><th>Nombre</th><th>Estado</th><th>Acción</th></tr></thead>
+      <tbody><tr><td>INF-1001</td><td>Resultado de laboratorio de ejemplo</td><td><span class="pill upcoming">Disponible</span></td><td><button id="downloadReport">Descargar informe</button></td></tr></tbody>
+    </table>
+    <div id="downloadMessage" class="notice hidden" role="status"></div>
+  </section>
+</main>
+<footer>Portal de demostración. No utilizar para decisiones médicas reales.<div class="credentials-note">Credenciales de prueba: paciente@biotest.demo · Contraseña: Demo123!</div></footer>
+<script>
+const DEMO_EMAIL='paciente@biotest.demo', DEMO_PASSWORD='Demo123!';
+const initialAppointments=[
+ {id:'CIT-2001',specialty:'Medicina general',date:'2026-10-28 09:30',status:'Programada'},
+ {id:'CIT-2002',specialty:'Laboratorio clínico',date:'2026-10-30 11:00',status:'Programada'}
+];
+let appointments=JSON.parse(localStorage.getItem('biotestAppointments')||'null')||initialAppointments;
+let loggedIn=sessionStorage.getItem('biotestLoggedIn')==='true';
+const views=['login','forgot','dashboard','appointments','reports'];
+function el(id){return document.getElementById(id)}
+function showMessage(id,msg,kind=''){const n=el(id);n.textContent=msg;n.className='notice'+(kind?' '+kind:'')}
+function hideMessage(id){el(id).classList.add('hidden')}
+function saveAppointments(){localStorage.setItem('biotestAppointments',JSON.stringify(appointments))}
+function showView(name){
+ if(['dashboard','appointments','reports'].includes(name)&&!loggedIn){name='login';showMessage('loginMessage','Debes iniciar sesión para acceder a esta sección.','error')}
+ views.forEach(v=>el(v+'View').classList.toggle('hidden',v!==name));
+ el('nav').classList.toggle('hidden',!loggedIn);
+ if(name==='appointments')renderAppointments();
+}
+function renderAppointments(){
+ const body=el('appointmentRows');body.innerHTML='';
+ appointments.forEach(a=>{
+  const tr=document.createElement('tr');
+  const statusClass=a.status==='Cancelada'?'cancelled':'upcoming';
+  tr.innerHTML=`<td>${a.id}</td><td>${a.specialty}</td><td>${a.date}</td><td><span class="pill ${statusClass}">${a.status}</span></td><td></td>`;
+  const cell=tr.lastElementChild;
+  if(a.status!=='Cancelada'){const b=document.createElement('button');b.className='danger';b.id='cancel-'+a.id;b.textContent='Cancelar cita';b.addEventListener('click',()=>cancelAppointment(a.id));cell.appendChild(b)}
+  else cell.textContent='—';
+  body.appendChild(tr);
+ });
+}
+function cancelAppointment(id){
+ const a=appointments.find(x=>x.id===id);if(!a)return;
+ a.status='Cancelada';saveAppointments();renderAppointments();
+ showMessage('appointmentMessage','La cita '+id+' se ha cancelado correctamente.','success');
+}
+el('loginForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ if(el('loginEmail').value.trim().toLowerCase()===DEMO_EMAIL&&el('loginPassword').value===DEMO_PASSWORD){
+  loggedIn=true;sessionStorage.setItem('biotestLoggedIn','true');hideMessage('loginMessage');showView('dashboard');
+ }else showMessage('loginMessage','Correo o contraseña incorrectos.','error');
+});
+el('logoutBtn').addEventListener('click',()=>{
+  loggedIn=false;
+  sessionStorage.removeItem('biotestLoggedIn');
+  el('loginForm').reset();
+  el('loginPassword').value='';
+  el('loginEmail').value='';
+  hideMessage('loginMessage');
+  showView('login');
+  showMessage('loginMessage','Has cerrado sesión correctamente.','success');
+});
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
+el('forgotLink').addEventListener('click',()=>{el('recoveryEmail').value=el('loginEmail').value;hideMessage('recoveryMessage');showView('forgot')});
+el('backLogin').addEventListener('click',()=>showView('login'));
+el('forgotForm').addEventListener('submit',e=>{
+ e.preventDefault();const email=el('recoveryEmail').value.trim().toLowerCase();
+ if(email===DEMO_EMAIL)showMessage('recoveryMessage','Solicitud recibida. Si el correo corresponde a una cuenta de demostración, se mostrarán instrucciones de recuperación.','success');
+ else showMessage('recoveryMessage','No se encontró una cuenta de demostración con ese correo.','error');
+});
+el('downloadReport').addEventListener('click',()=>{
+ const content='BioTest Diagnósticos — INFORME DE EJEMPLO\\nID: INF-1001\\nTipo: Resultado de laboratorio simulado\\nEstado: Disponible\\nEste documento es ficticio y se usa únicamente para pruebas de software.\\n';
+ const blob=new Blob([content],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');a.href=url;a.download='INF-1001_informe_demo.txt';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+ showMessage('downloadMessage','Se solicitó la descarga del informe INF-1001. Comprueba las descargas del navegador.','success');
+});
+window.addEventListener('pageshow',()=>{loggedIn=sessionStorage.getItem('biotestLoggedIn')==='true';showView(loggedIn?'dashboard':'login')});
+</script>
+</body>
+</html>
